@@ -11,10 +11,10 @@ npm run build
 cd dist
 
 git init
-git checkout -b main
+git checkout -b demo
 git add -A
 git commit -m 'deploy'
 
-git push -f git@github.com:mataca9/mataca9.github.io.git main
+git push -f git@github.com:mataca9/mataca9.github.io.git demo
 
 cd -
