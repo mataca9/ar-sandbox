@@ -6,7 +6,7 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 import { useLoader, useFrame } from '@react-three/fiber'
 
 function MyObj() {
-  const obj = useLoader(GLTFLoader, '/data/Shine_Sprite.gltf')
+  const obj = useLoader(GLTFLoader, 'data/Shine_Sprite.gltf')
   const objRef = useRef({});
   useFrame(({ clock }) => {
     objRef.current.rotation.y += 0.01;
