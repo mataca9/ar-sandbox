@@ -17,6 +17,11 @@ $ npm install
 $ npm run dev
 ```
 
+## Build
+```
+$ npm run build
+```
+
 ## About demo
 
 There is a demo using hiro marker.
