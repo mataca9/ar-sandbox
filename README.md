@@ -36,3 +36,5 @@ Use a camera to capture it, then the 3D images could be rendered.
 > The best way to use this marker is to print it.
 
 > You can try use a phone with the image, but the reflexive screen could spoil the results of the marker identification.
+
+Click here for [Live demo](https://mataca9.github.io/ar-sandbox/)
