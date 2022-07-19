@@ -1,4 +1,4 @@
-# ThreeJS
+# AR Sandbox
 
 This is a study repository of AR technology driven by react and 3D/AR libs.
 

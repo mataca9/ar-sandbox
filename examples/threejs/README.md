@@ -1,4 +1,4 @@
-# Threejs Basic
+# Threejs
 
 This example helps understand usage of geometry, mesh/materials and lights
 
