@@ -1,31 +1,29 @@
-export async function mockVideo(src) {
-  return new Promise(resolveStart => {
-    const button = document.createElement('button');
-    button.innerText = "Start Vídeo"
-    button.style.position = "absolute";
-    button.style.zIndex = 30;
+export const mockWithVideo = (path) => {
+  navigator.mediaDevices.getUserMedia = () => {
+    return new Promise((resolve, reject) => {
+      const video = document.createElement("video");
 
-    button.addEventListener("click", function () {
-      navigator.mediaDevices.getUserMedia = () => {
-        return new Promise((resolve, reject) => {
-          const video = document.createElement("video");
-          video.setAttribute("src", src);
-          video.setAttribute("loop", "");
+      video.oncanplay = () => {
+        const startButton = document.createElement("button");
+        startButton.innerHTML = "start";
+        startButton.style.position = 'fixed';
+        startButton.style.zIndex = 10000;
+        document.body.appendChild(startButton);
 
-          video.oncanplay = () => {
-            video.play();
-            resolve(video.captureStream());
-          }
+        startButton.addEventListener('click', () => {
+          const stream = video.captureStream();
+          video.play();
+          document.body.removeChild(startButton);
+          resolve(stream);
         });
-      }
-      resolveStart();
-    }, { once: true });
-
-    document.body.appendChild(button);
-  })
+      };
+      video.setAttribute('loop', '');
+      video.setAttribute("src", path);
+    });
+  };
 }
 
-export const mockImage = (src) => {
+export const mockWithImage = (path) => {
   navigator.mediaDevices.getUserMedia = () => {
     return new Promise((resolve, reject) => {
       const canvas = document.createElement("canvas");
@@ -39,7 +37,7 @@ export const mockImage = (src) => {
         const stream = canvas.captureStream();
         resolve(stream);
       }
-      image.src = src;
+      image.src = path;
     });
   };
 }

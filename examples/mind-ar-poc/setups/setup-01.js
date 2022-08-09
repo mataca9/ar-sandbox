@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { mockImage, mockVideo } from '../utils/camera-mock';
+import { mockWithImage } from '../utils/camera-mock';
 
 let acceleration = 0.001;
 let ySpeed = 0;
@@ -12,11 +12,8 @@ let rotationSpeed = 0;
     container: document.body,
     imageTargetSrc: '../assets/targets-3.mind'
   });
-  
-  // mocking sample video
-  //await mockVideo('../assets/sapiens.jpg');
-  mockImage('../assets/sapiens.jpg')
 
+  mockWithImage('../assets/sapiens.jpg');
   const { renderer, scene, camera } = mindarThree;
 
   const geometry = new THREE.PlaneBufferGeometry(1, 1);
@@ -33,7 +30,7 @@ let rotationSpeed = 0;
     })
   )
 
-  cube.position.z = 0.3;    
+  cube.position.z = 0.3;
 
   const anchor = mindarThree.addAnchor(0);
   anchor.group.add(cube);
@@ -41,7 +38,7 @@ let rotationSpeed = 0;
 
   await mindarThree.start();
   renderer.setAnimationLoop(() => {
-    
+
 
     if (xSpeed > 0) {
       xSpeed -= friction;
@@ -69,34 +66,40 @@ let rotationSpeed = 0;
     renderer.render(scene, camera);
   });
 
-  document.addEventListener("keydown", onDocumentKeyDown, false);  
+  document.addEventListener("keydown", onDocumentKeyDown, false);
   function onDocumentKeyDown(event) {
-      switch(event.key) {
-        case "w":        
-          ySpeed += acceleration;
-          break;
-        case "s":
-          ySpeed -= acceleration;
-          break;
-        case "a":
-          xSpeed -= acceleration;
-          break;
-        case "d":
-          xSpeed += acceleration;
-          break;
-        case "w":        
-          cube.position.y += ySpeed;
-          break;
-        case "q":        
-          rotationSpeed -= 0.001;
-          break;
-        case "e":        
-          rotationSpeed += 0.001;
-          break;
-        case ' ':
-            cube.position.x = 0;
-            cube.position.y = 0;
-            break;
-      }
+    if (event.key === "w") {
+      ySpeed += acceleration;
+    }
+
+    if (event.key === "s") {
+      ySpeed -= acceleration;
+    }
+
+    if (event.key === "a") {
+      xSpeed -= acceleration;
+    }
+
+    if (event.key === "d") {
+      xSpeed += acceleration;
+    }
+
+    if (event.key === "w") {
+      cube.position.y += ySpeed;
+    }
+
+    if (event.key === "q") {
+      rotationSpeed -= 0.001;
+    }
+
+    if (event.key === "e") {
+      rotationSpeed += 0.001;
+    }
+
+    if (event.key === ' ') {
+      cube.position.x = 0;
+      cube.position.y = 0;
+    }
+
   };
 })();

@@ -1,2 +1,2 @@
 import './style.css'
-import './setups/setup-01.js';
+import './setups/setup-02.js';
