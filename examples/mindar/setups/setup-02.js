@@ -23,7 +23,8 @@ function loadAudio(path) {
 (async () => {
   const mindarThree = new window.MINDAR.IMAGE.MindARThree({
     container: document.body,
-    imageTargetSrc: "../assets/targets.mind",
+    imageTargetSrc: "../assets/targets-2.mind",
+    maxTrack: 2,
   });
 
   // Mocking camera image
@@ -34,62 +35,97 @@ function loadAudio(path) {
   const light = new THREE.HemisphereLight(0xffffff, 0xbbbbff, 1);
   scene.add(light);
 
-  // Loading model - Raccoon
+  // Raccoon
+  // - Loading model
   const raccoon = await loadGLTF(
     "../assets/models/musicband-raccoon/scene.gltf"
   );
 
-  // Setting model animation - Raccoon
+  // - Setting model animation
   const mixer = new THREE.AnimationMixer(raccoon.scene);
   const action = mixer.clipAction(raccoon.animations[0]);
   action.play();
 
-  // Fixing model position - Raccoon
+  // - Fixing model position
   raccoon.scene.scale.set(0.1, 0.1, 0.1);
   raccoon.scene.position.set(0, 0, 0);
   raccoon.scene.rotation.x = THREE.MathUtils.degToRad(90);
 
-  // Loading model - Cake
-  const cake = await loadGLTF("../assets/models/cake.gltf");
-
-  // attaching to anchor
+  // - Attaching to anchor
   const anchor = mindarThree.addAnchor(0);
   anchor.group.add(raccoon.scene);
 
-  // attaching to anchor
+  // Bear
+  // - Loading model
+  const bear = await loadGLTF("../assets/models/musicband-bear/scene.gltf");
+
+  // - Setting model animation
+  const mixer2 = new THREE.AnimationMixer(bear.scene);
+  const action2 = mixer2.clipAction(bear.animations[0]);
+  action2.play();
+
+  // - Fixing model position
+  bear.scene.scale.set(0.1, 0.1, 0.1);
+  bear.scene.position.set(0, 0, 0);
+  bear.scene.rotation.x = THREE.MathUtils.degToRad(90);
+
+  // Attaching to anchor
   const anchor2 = mindarThree.addAnchor(1);
-  anchor2.group.add(cake.scene);
+  anchor2.group.add(bear.scene);
 
   // Audio Setup
-  const audioClip = await loadAudio(
-    "../assets/sounds/musicband-background.mp3"
-  );
   const listener = new THREE.AudioListener();
-  const audio = new THREE.PositionalAudio(listener);
-
-  const audioClip2 = await loadAudio("../assets/sounds/musicband-drum-set.mp3");
-  const audio2 = new THREE.Audio(listener);
-  audio2.setBuffer(audioClip2);
-
   camera.add(listener);
-  anchor.group.add(audio);
-  audio.setRefDistance(100);
-  audio.setBuffer(audioClip);
-  audio.setLoop(true);
+
+  // - Music 1
+  const audioClipDrums = await loadAudio("../assets/sounds/drums.wav");
+  const audioDrums = new THREE.PositionalAudio(listener);
+
+  anchor.group.add(audioDrums);
+  audioDrums.setRefDistance(200);
+  audioDrums.setBuffer(audioClipDrums);
+  audioDrums.setLoop(true);
+
+  // - Music 2
+  const audioClipCello = await loadAudio("../assets/sounds/cello.wav");
+  const listenerCello = new THREE.AudioListener();
+  const audioCello = new THREE.PositionalAudio(listener);
+
+  camera.add(listenerCello);
+  anchor2.group.add(audioCello);
+  audioCello.setRefDistance(300);
+  audioCello.setBuffer(audioClipCello);
+  audioCello.setLoop(true);
+
+  // - Drumset
+  const audioClipDrums2 = await loadAudio(
+    "../assets/sounds/musicband-drum-set.mp3"
+  );
+  const audioDrums2 = new THREE.Audio(listener);
+  audioDrums2.setBuffer(audioClipDrums2);
 
   // Found and lost events: start and stop music
   anchor.onTargetFound = () => {
-    audio.play();
+    audioDrums.play();
   };
 
   anchor.onTargetLost = () => {
-    audio.pause();
+    audioDrums.pause();
+  };
+
+  // Found and lost events: start and stop music
+  anchor2.onTargetFound = () => {
+    audioCello.play();
+  };
+
+  anchor2.onTargetLost = () => {
+    audioCello.pause();
   };
 
   await mindarThree.start();
 
   // helper: set raccoon clickable (not a threejs feature)
-  raccoon.userData.clickable = true;
+  raccoon.scene.userData.clickable = true;
 
   document.body.addEventListener("click", (e) => {
     const { innerWidth, innerHeight } = window;
@@ -104,15 +140,17 @@ function loadAudio(path) {
 
     const intersects = raycaster.intersectObjects(scene.children, true);
     if (intersects.length > 0) {
-      audio2.play();
+      // audioDrums2.play();
       let obj = intersects[0].object;
       while (obj.parent && !obj.userData.clickable) {
         obj = obj.parent;
       }
 
+      console.log(obj);
+
       if (obj.userData.clickable) {
         if (obj === raccoon.scene) {
-          audio2.play();
+          audioDrums2.play();
         }
       }
     }
@@ -122,6 +160,7 @@ function loadAudio(path) {
   renderer.setAnimationLoop(() => {
     const delta = clock.getDelta();
     mixer.update(delta);
+    mixer2.update(delta);
     renderer.render(scene, camera);
   });
 })();
